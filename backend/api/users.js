@@ -8,6 +8,7 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
+    
     try{
         // POST - save or find user
         if (req.method === 'POST') {
