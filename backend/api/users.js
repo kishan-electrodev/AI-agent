@@ -12,9 +12,9 @@ export default async function handler(req, res) {
     try{
         // POST - save or find user
         if (req.method === 'POST') {
-            const {id, email} = req.body;
+            const {id, email, name} = req.body;
 
-            if (!id || !email) {
+            if (!id || !email || !name) {
                 return res.status(400).json({error: 'Missing required fields'});
             }
 
@@ -29,8 +29,8 @@ export default async function handler(req, res) {
 
             //create new user
             const result = await sql`
-                INSERT INTO users (id, email)
-                VALUES (${id}, ${email})
+                INSERT INTO users (id, email, name)
+                VALUES (${id}, ${email}, ${name})
                 RETURNING *;
             `;
 
