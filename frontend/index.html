@@ -1182,436 +1182,159 @@
         )});">
                     <i class="fas ${icon}"></i>
                 </div>
-                <div class="notification-content">
-                    <div class="notification-title">${title}</div>
-                    <div class="notification-message">${message}</div>
-                </div>
-                <button class="notification-close" onclick="closeNotification(this.parentElement)">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="notification-progress" style="background: linear-gradient(90deg, ${color}, ${adjustColor(
-          color,
-          -30
-        )});"></div>
-            `;
-
-        container.appendChild(notification);
-
-        // Trigger emoji rain
-        if (emojis) triggerEmojiRain(emojis);
-
-        // Create sparkles around notification
-        createSparkles(notification);
-
-        // Auto remove after 4 seconds
-        setTimeout(() => {
-          closeNotification(notification);
-        }, 4000);
-      }
-
-      // Close notification
-      function closeNotification(notification) {
-        notification.classList.add("exit");
-        setTimeout(() => {
-          if (notification.parentNode) notification.remove();
-        }, 500);
-      }
-
-      // Adjust color brightness
-      function adjustColor(color, amount) {
-        const hex = color.replace("#", "");
-        const num = parseInt(hex, 16);
-        const r = Math.min(255, Math.max(0, (num >> 16) + amount));
-        const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00ff) + amount));
-        const b = Math.min(255, Math.max(0, (num & 0x0000ff) + amount));
-        return (
-          "#" + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)
-        );
-      }
-
-      // Trigger emoji rain
-      function triggerEmojiRain(emojis) {
-        for (let i = 0; i < 15; i++) {
-          setTimeout(() => {
-            const emoji = document.createElement("div");
-            emoji.className = "emoji-rain";
-            emoji.textContent =
-              emojis[Math.floor(Math.random() * emojis.length)];
-            emoji.style.left = Math.random() * 100 + "%";
-            emoji.style.animationDuration = Math.random() * 2 + 2 + "s";
-            document.body.appendChild(emoji);
-
-            setTimeout(() => emoji.remove(), 3000);
-          }, i * 100);
-        }
-      }
-
-      // Create confetti
-      function createConfetti() {
-        const container = document.getElementById("confettiContainer");
-        const colors = [
-          "#f093fb",
-          "#4facfe",
-          "#43e97b",
-          "#fa709a",
-          "#ff6b6b",
-          "#fee140",
-        ];
-
-        for (let i = 0; i < 50; i++) {
-          setTimeout(() => {
-            const confetti = document.createElement("div");
-            confetti.className = "confetti";
-            confetti.style.left = Math.random() * 100 + "%";
-            confetti.style.backgroundColor =
-              colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.animationDuration = Math.random() * 2 + 2 + "s";
-            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-            container.appendChild(confetti);
-
-            setTimeout(() => confetti.remove(), 3000);
-          }, i * 50);
-        }
-      }
-
-      // Create sparkles
-      function createSparkles(element) {
-        const rect = element.getBoundingClientRect();
-        for (let i = 0; i < 5; i++) {
-          setTimeout(() => {
-            const sparkle = document.createElement("div");
-            sparkle.className = "sparkle";
-            sparkle.style.left = rect.left + Math.random() * rect.width + "px";
-            sparkle.style.top = rect.top + Math.random() * rect.height + "px";
-            document.body.appendChild(sparkle);
-
-            setTimeout(() => sparkle.remove(), 800);
-          }, i * 100);
-        }
-      }
-
-      // Add ripple effect to buttons
-      function addRipple(event, element) {
-        const ripple = document.createElement("span");
-        ripple.className = "ripple";
-        const rect = element.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        ripple.style.width = ripple.style.height = size + "px";
-        ripple.style.left = event.clientX - rect.left - size / 2 + "px";
-        ripple.style.top = event.clientY - rect.top - size / 2 + "px";
-        element.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
-      }
-
-      // Animate text character by character
-      function animateText(element, text) {
-        element.innerHTML = "";
-        [...text].forEach((char, i) => {
-          const span = document.createElement("span");
-          span.textContent = char === " " ? "\u00A0" : char;
-          span.style.animationDelay = i * 0.05 + "s";
-          element.appendChild(span);
-        });
-      }
-
-      // Switch mode with transition
-      async function switchMode(mode) {
-        if (mode === currentMode) {
-          // Shake effect if clicking same mode
-          document.getElementById("chatContainer").classList.add("shake");
-          setTimeout(() => {
-            document.getElementById("chatContainer").classList.remove("shake");
-          }, 500);
-          return;
-        }
-
-        const config = modeConfig[mode];
-        const overlay = document.getElementById("transitionOverlay");
-        const transitionIcon = document.getElementById("transitionIcon");
-        const transitionText = document.getElementById("transitionText");
-        const statusMessages = document.getElementById("statusMessages");
-        const loadingProgress = document.getElementById("loadingProgress");
-        const circularProgress = document.getElementById("circularProgress");
-
-        // Update transition content
-        transitionIcon.innerHTML = `<i class="fas ${config.icon}"></i>`;
-        transitionIcon.style.color = config.color;
-
-        // Animate text
-        animateText(transitionText, `Activating ${config.name}`);
-
-        // Show overlay
-        overlay.classList.add("active");
-
-        // Reset animations
-        loadingProgress.style.animation = "none";
-        loadingProgress.offsetHeight;
-        loadingProgress.style.animation =
-          "loadingProgress 2s ease-out forwards, shimmer 1s linear infinite";
-
-        circularProgress.style.animation = "none";
-        circularProgress.offsetHeight;
-        circularProgress.style.animation =
-          "circularProgress 2s ease-out forwards";
-
-        // Animate status messages
-        let messageIndex = 0;
-        const messageInterval = setInterval(() => {
-          if (messageIndex < config.statusMessages.length) {
-            statusMessages.style.animation = "none";
-            statusMessages.offsetHeight;
-            statusMessages.style.animation = "fadeInOut 0.5s ease";
-            statusMessages.textContent = config.statusMessages[messageIndex];
-            messageIndex++;
-          }
-        }, 400);
-
-        // Create confetti
-        createConfetti();
-
-        // Wait for transition
-        await new Promise((resolve) => setTimeout(resolve, 2500));
-        clearInterval(messageInterval);
-
-        // Update mode
-        currentMode = mode;
-        document.body.setAttribute("data-theme", mode);
-
-        // Update buttons
-        document.querySelectorAll(".mode-btn").forEach((btn) => {
-          btn.classList.remove("active");
-          if (btn.dataset.mode === mode) {
-            btn.classList.add("active");
-          }
-        });
-
-        // Update mode display
-        document.getElementById("modeIcon").className = `fas ${config.icon}`;
-        document.getElementById("modeName").textContent = config.name;
-
-        // Update quick actions
-        const quickActionsContainer = document.getElementById("quickActions");
-        quickActionsContainer.innerHTML = config.quickActions
-          .map(
-            (action) =>
-              `<button class="quick-action-btn" onclick="quickAction('${action.prompt}')">${action.text}</button>`
-          )
-          .join("");
-
-        // Update input placeholder
-        document.getElementById("chatInput").placeholder = config.placeholder;
-
-        // Clear chat and add greeting
-        const chatMessages = document.getElementById("chatMessages");
-        chatMessages.innerHTML = "";
-        addBotMessage(config.greeting);
-
-        // Hide overlay
-        overlay.classList.remove("active");
-
-        // Show notification
-        showNotification(
-          `${config.emoji} ${config.name}`,
-          "Mode activated successfully!",
-          config.icon,
-          config.color,
-          config.notificationEmojis
-        );
-
-        // Add special effects based on mode
-        const chatContainer = document.getElementById("chatContainer");
-        chatContainer.classList.remove("glitch", "rainbow", "matrix-bg");
-
-        if (mode === "bitching") {
-          chatContainer.classList.add("glitch");
-          setTimeout(() => chatContainer.classList.remove("glitch"), 1000);
-        } else if (mode === "buddy") {
-          chatContainer.classList.add("rainbow");
-          setTimeout(() => chatContainer.classList.remove("rainbow"), 2000);
-        } else if (mode === "nerdy") {
-          chatContainer.classList.add("matrix-bg");
-          setTimeout(() => chatContainer.classList.remove("matrix-bg"), 2000);
-        }
-      }
-
-      // Send message (UPDATED TO USE API)
-      async function sendMessage() {
-        const input = document.getElementById("chatInput");
-        const message = input.value.trim();
-
-        if (!message) return;
-
-        // Add ripple effect
-        const sendBtn = document.querySelector(".send-btn");
-        createSparkles(sendBtn);
-
-        addUserMessage(message);
-        input.value = "";
-
-        // Show typing indicator
-        document.getElementById("typingIndicator").classList.add("active");
-
-        // --- API LOGIC ---
-        try {
-          const config = modeConfig[currentMode];
-
-          if (config.isImageMode) {
-            // Image Mode Logic
-            const messages = [
-              { role: "system", content: config.systemPrompt },
-              { role: "user", content: message },
-            ];
-            // Step 1: Use LLM to refine the prompt
-            const refinedPrompt = await fetchGroq(messages, config.model);
-            // Step 2: Use Pollinations for image generation
-            const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(
-              refinedPrompt
-            )}?nologo=true`;
-
-            // Hide typing indicator
-            document
-              .getElementById("typingIndicator")
-              .classList.remove("active");
-
-            addBotMessage(
-              `🎨 <b>Prompt:</b> ${refinedPrompt}<br><br><img src="${imageUrl}" onload="this.style.opacity=1" style="max-width:100%; border-radius:15px; opacity:0; transition:opacity 1s;" alt="Generated Image">`
-            );
-          } else {
-            // Chat Mode Logic
-            const messages = [
-              { role: "system", content: config.systemPrompt },
-              { role: "user", content: message },
-            ];
-            const responseText = await fetchGroq(messages, config.model);
-
-            // Hide typing indicator
-            document
-              .getElementById("typingIndicator")
-              .classList.remove("active");
-
-            addBotMessage(responseText);
-          }
-        } catch (error) {
-          document.getElementById("typingIndicator").classList.remove("active");
-          addBotMessage(`❌ Error: ${error.message}`);
-        }
-      }
-
-      // Add user message
-      function addUserMessage(text) {
-        const chatMessages = document.getElementById("chatMessages");
-        const time = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        const messageHTML = `
-                <div class="message user">
-                    <div class="message-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-text">${escapeHtml(text)}</div>
-                        <div class="message-time">
-                            <i class="fas fa-check-double"></i>
-                            ${time}
-                        </div>
+                <div class="skeleton-item">
+                    <div class="skeleton skeleton-icon"></div>
+                    <div class="skeleton-text-group">
+                        <div class="skeleton skeleton-text w-75"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
                     </div>
                 </div>
-            `;
-
-        chatMessages.innerHTML += messageHTML;
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
-
-      // Add bot message (UPDATED FOR MARKDOWN & MATH)
-      function addBotMessage(text) {
-        const chatMessages = document.getElementById("chatMessages");
-        const time = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        // 1. Convert Markdown to HTML
-        let htmlContent = marked.parse(text);
-
-        const div = document.createElement("div");
-        div.className = "message bot";
-
-        div.innerHTML = `
-                <div class="message-avatar">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <div class="message-content">
-                    <div class="message-text">${htmlContent}</div>
-                    <div class="message-time">
-                        <i class="fas fa-clock"></i>
-                        ${time}
+                <div class="skeleton-item">
+                    <div class="skeleton skeleton-icon"></div>
+                    <div class="skeleton-text-group">
+                        <div class="skeleton skeleton-text w-full"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
                     </div>
                 </div>
-            `;
+            </div>
+        </div>
 
-        chatMessages.appendChild(div);
+        <div id="actualContent" style="display: none;">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Today</div>
+                <div class="chat-item active">
+                    <div class="chat-icon">💬</div>
+                    <div class="chat-text">
+                        <div class="chat-title">AI Interface Design</div>
+                        <div class="chat-subtitle">Creating modern UI components...</div>
+                    </div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-icon">🎨</div>
+                    <div class="chat-text">
+                        <div class="chat-title">Color Palette Generator</div>
+                        <div class="chat-subtitle">Dark theme colors for app...</div>
+                    </div>
+                </div>
+            </div>
 
-        // 2. Render Math (KaTeX)
-        if (window.renderMathInElement) {
-          renderMathInElement(div, {
-            delimiters: [
-              { left: "$$", right: "$$", display: true },
-              { left: "$", right: "$", display: false },
-              { left: "\\(", right: "\\)", display: false },
-              { left: "\\[", right: "\\]", display: true },
-            ],
-            throwOnError: false,
-          });
-        }
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Yesterday</div>
+                <div class="chat-item">
+                    <div class="chat-icon">📝</div>
+                    <div class="chat-text">
+                        <div class="chat-title">Blog Post Ideas</div>
+                        <div class="chat-subtitle">Tech trends for 2026...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
+    <div class="sidebar-footer">
+        <div class="footer-item">
+            <div class="footer-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </div>
+            <span>Settings</span>
+        </div>
+        <div class="footer-item">
+            <div class="footer-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <span>Help & FAQ</span>
+        </div>
+        <div class="footer-item">
+            <div class="footer-icon user-avatar">A</div>
+            <span>Aryan</span>
+        </div>
+    </div>
+</nav>
 
-      // Quick action
-      function quickAction(prompt) {
-        const btn = event.target;
-        createSparkles(btn);
-        document.getElementById("chatInput").value = prompt;
-        sendMessage();
-      }
+<main class="main">
+    <div class="top-right">
+        <span>Login</span>
+        <span>Feedback</span>
+    </div>
 
-      // Handle enter key
-      function handleKeyPress(event) {
-        if (event.key === "Enter") {
-          sendMessage();
-        }
-      }
+    <div class="greeting">
+        <h1><span class="status-dot"></span>Hi Aryan</h1>
+        <p>It's time to start counting down to 2026</p>
+    </div>
 
-      // Escape HTML
-      function escapeHtml(text) {
-        const div = document.createElement("div");
-        div.textContent = text;
-        return div.innerHTML;
-      }
+    <div class="prompt-box">
+        <input type="text" placeholder="Ask your AI assistant…" />
+        <div class="send-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+            </svg>
+        </div>
+    </div>
 
-      // Add ripple effect to mode buttons
-      document.querySelectorAll(".mode-btn").forEach((btn) => {
-        btn.addEventListener("click", function (e) {
-          addRipple(e, this);
-        });
-      });
+    <div class="personality" id="modes">
+        <button class="active">Assistant</button>
+        <button>Teacher</button>
+        <button>Buddy</button>
+        <button>Advisor</button>
+    </div>
 
-      // Initialize
-      document.addEventListener("DOMContentLoaded", () => {
-        createParticles();
-        createFloatingShapes();
+    <div class="secondary-actions">
+        <button>＋ Add files</button>
+        </div>
 
-        // Show initial notification
+    <div class="quick-actions">
+        <div class="chip">Create image</div>
+        <div class="chip">Write anything</div>
+        <div class="chip">Create a video</div>
+        <div class="chip">Help me learn</div>
+        <div class="chip">Boost my day</div>
+    </div>
+</main>
+
+<script>
+const menuToggle = document.getElementById('menuToggle');
+const closeSidebar = document.getElementById('closeSidebar');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const skeletonLoader = document.getElementById('skeletonLoader');
+const actualContent = document.getElementById('actualContent');
+
+let isOpen = false;
+let contentLoaded = false;
+
+function openSidebar() {
+    isOpen = true;
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Load content with skeleton animation
+    if (!contentLoaded) {
         setTimeout(() => {
-          showNotification(
-            "👋 Welcome to PolyMaths AI!",
-            "Select a mode to get started",
-            "fa-robot",
-            "#667eea",
-            ["👋", "🤖", "✨", "🎉", "💫"]
-          );
+            skeletonLoader.style.opacity = '0';
+            skeletonLoader.style.transition = 'opacity 0.3s ease';
+            
+            setTimeout(() => {
+                skeletonLoader.style.display = 'none';
+                actualContent.style.display = 'block';
+                actualContent.style.opacity = '0';
+                actualContent.style.transform = 'translateY(10px)';
+                
+                requestAnimationFrame(() => {
+                    actualContent.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    actualContent.style.opacity = '1';
+                    actualContent.style.transform = 'translateY(0)';
+                });
+                
+                contentLoaded = true;
+            }, 300);
         }, 1000);
       });
     </script>
