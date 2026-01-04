@@ -581,14 +581,14 @@
 
       /* Secondary actions */
       .secondary-actions {
-        margin-top: 14px;
         width: 100%;
-        max-width: 720px;
+        max-width: 100px;
         display: flex;
         justify-content: space-between; /* Keeps Add Files on left */
         align-items: center;
         font-size: 14px;
         color: var(--muted);
+        border-right: 2px solid var(--text);
       }
 
       .secondary-actions button {
@@ -710,6 +710,70 @@
         justify-content: center;
         align-items: center;
       }
+
+      /* Chat Messages Container */
+      #chatContainer {
+        width: 100%;
+        max-width: 1080px;
+        flex: 1;
+        overflow-y: auto;
+        display: none;
+        padding: 40px 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+      }
+
+      .message {
+        margin-bottom: 32px;
+        display: flex;
+        flex-direction: column;
+        animation: fadeIn 0.4s ease forwards;
+      }
+
+      .message.user {
+        align-items: flex-end;
+      }
+      .message.ai {
+        align-items: flex-start;
+      }
+
+      .message-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .message-content {
+        max-width: 85%;
+        padding: 12px 18px;
+        border-radius: 18px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .user .message-content {
+        background: var(--surface-light);
+        color: var(--text);
+        border-bottom-right-radius: 4px;
+      }
+
+      .ai .message-content {
+        background: transparent;
+        color: var(--text);
+        padding-left: 0;
+      }
+
+      /* Scrollbar */
+      #chatContainer::-webkit-scrollbar {
+        width: 6px;
+      }
+      #chatContainer::-webkit-scrollbar-thumb {
+        background: var(--surface-light);
+        border-radius: 10px;
+      }
     </style>
   </head>
 
@@ -829,8 +893,7 @@
           </div>
           <span>Help & FAQ</span>
         </div>
-        <div class="footer-item user-profile">
-        </div>
+        <div class="footer-item user-profile"></div>
       </div>
     </nav>
 
@@ -840,14 +903,19 @@
         <span>Feedback</span>
       </div>
 
-      <div class="greeting">
+      <div class="greeting" id="greetingView">
         <h1></h1>
         <p>It's time to start counting down to 2026</p>
       </div>
 
+      <div id="chatContainer"></div>
+
       <div class="prompt-box">
-        <input type="text" placeholder="Ask your AI assistant…" />
-        <div class="send-btn">
+        <div class="secondary-actions">
+        <button>＋ Add files</button>
+      </div>
+        <input type="text" id="userInput" placeholder="Ask your AI assistant…" />
+        <div class="send-btn" id="sendBtn">
           <svg viewBox="0 0 24 24">
             <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
           </svg>
@@ -861,11 +929,8 @@
         <button>Advisor</button>
       </div>
 
-      <div class="secondary-actions">
-        <button>＋ Add files</button>
-      </div>
 
-      <div class="quick-actions">
+      <div class="quick-actions" id="quickActions">
         <div class="chip">Create image</div>
         <div class="chip">Write anything</div>
         <div class="chip">Create a video</div>
@@ -1552,6 +1617,7 @@
     <script>
       const menuToggle = document.getElementById("menuToggle");
       const closeSidebar = document.getElementById("closeSidebar");
+      const chatContainer = document.getElementById("chatContainer");
       const sidebar = document.getElementById("sidebar");
       const overlay = document.getElementById("overlay");
       const skeletonLoader = document.getElementById("skeletonLoader");
@@ -1559,6 +1625,59 @@
 
       let isOpen = false;
       let contentLoaded = false;
+
+      // Chat UI Logic
+      function addMessage(text, sender) {
+        // Transition UI from Greeting to Chat
+        greetingView.style.display = "none";
+        quickActions.style.display = "none";
+        chatContainer.style.display = "block";
+
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `message ${sender}`;
+
+        msgDiv.innerHTML = `
+        <div class="message-label">${
+          sender === "user" ? "You" : "AI Assistant"
+        }</div>
+        <div class="message-content">${text}</div>
+    `;
+
+        chatContainer.appendChild(msgDiv);
+
+        // Auto-scroll to bottom
+        chatContainer.scrollTo({
+          top: chatContainer.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+
+      function handleSend() {
+        const text = userInput.value.trim();
+        if (text) {
+          addMessage(text, "user");
+          userInput.value = "";
+
+          // Simulate AI Response delay
+          setTimeout(() => {
+            const aiResponses = [
+              "That's an interesting question. Let me look into that for you.",
+              "I've updated my internal logs with that information. What's next?",
+              "Got it. I'm ready to help you build or analyze that request.",
+              "I'm here to assist. Would you like more details on that topic?",
+            ];
+            const randomResponse =
+              aiResponses[Math.floor(Math.random() * aiResponses.length)];
+            addMessage(randomResponse, "ai");
+          }, 1000);
+        }
+      }
+
+      sendBtn.addEventListener("click", handleSend);
+
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleSend();
+      });
 
       function openSidebar() {
         isOpen = true;
