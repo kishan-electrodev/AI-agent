@@ -525,6 +525,7 @@
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s ease;
+        flex-shrink: 0;
       }
 
       .send-btn:hover {
@@ -912,9 +913,13 @@
 
       <div class="prompt-box">
         <div class="secondary-actions">
-        <button>＋ Add files</button>
-      </div>
-        <input type="text" id="userInput" placeholder="Ask your AI assistant…" />
+          <button>＋ Add files</button>
+        </div>
+        <input
+          type="text"
+          id="userInput"
+          placeholder="Ask your AI assistant…"
+        />
         <div class="send-btn" id="sendBtn">
           <svg viewBox="0 0 24 24">
             <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
@@ -928,7 +933,6 @@
         <button>Buddy</button>
         <button>Advisor</button>
       </div>
-
 
       <div class="quick-actions" id="quickActions">
         <div class="chip">Create image</div>
