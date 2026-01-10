@@ -947,7 +947,7 @@
     <script>
       // --- API CONFIGURATION ---
       const GROQ_API_KEY =
-        "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"; // HARDCODED KEY
+        "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"; // HARDCODED KEY
 
       async function fetchGroq(messages, model) {
         try {
@@ -1137,36 +1137,7 @@
       };
 
       let currentMode = "buddy";
-      let notificationCount = 0;
 
-      // Initialize particles
-      function createParticles() {
-        const container = document.getElementById("particles");
-        for (let i = 0; i < 50; i++) {
-          const particle = document.createElement("div");
-          particle.className = "particle";
-          particle.style.left = Math.random() * 100 + "%";
-          particle.style.animationDelay = Math.random() * 15 + "s";
-          particle.style.animationDuration = Math.random() * 10 + 10 + "s";
-          container.appendChild(particle);
-        }
-      }
-
-      // Initialize floating shapes
-      function createFloatingShapes() {
-        const container = document.getElementById("floatingShapes");
-        const shapes = ["circle", "square", "triangle"];
-        for (let i = 0; i < 15; i++) {
-          const shape = document.createElement("div");
-          shape.className =
-            "shape " + shapes[Math.floor(Math.random() * shapes.length)];
-          shape.style.left = Math.random() * 100 + "%";
-          shape.style.top = Math.random() * 100 + "%";
-          shape.style.animationDelay = Math.random() * 20 + "s";
-          shape.style.animationDuration = Math.random() * 10 + 15 + "s";
-          container.appendChild(shape);
-        }
-      }
     </script>
 
     <!-- New Script Code JS Below -->
@@ -1179,6 +1150,9 @@
       const overlay = document.getElementById("overlay");
       const skeletonLoader = document.getElementById("skeletonLoader");
       const actualContent = document.getElementById("actualContent");
+      // --- API CONFIGURATION ---
+
+      
 
       let isOpen = false;
       let contentLoaded = false;
