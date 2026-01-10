@@ -59,4 +59,5 @@ async function saveUserToBackend(user){
       name: user.fullName
     })
   });
+  
 }
