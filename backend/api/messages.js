@@ -1,4 +1,6 @@
 import {sql} from '../db/index.js';
+import { groq } from '@ai-sdk/groq';
+import { generateText } from 'ai';
 
 export default async function handler(req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -24,7 +26,33 @@ export default async function handler(req, res) {
                 RETURNING *;
             `;
 
-            return res.status(200).json(result[0]);
+            let aiResponse = null;
+            if (role === 'user') {
+                // Fetch conversation history
+                const history = await sql`
+                    SELECT role, text FROM messages
+                    WHERE chat_id = ${chat_id}
+                    ORDER BY created_at ASC;
+                `;
+
+                const messages = history.map(msg => ({ role: msg.role, content: msg.text }));
+
+                // Generate AI response
+                const { text: aiText } = await generateText({
+                    model: groq('llama-3.3-70b-versatile'),
+                    messages: messages,
+                });
+
+                // Save AI response
+                const aiResult = await sql`
+                    INSERT INTO messages (chat_id, user_id, role, text)
+                    VALUES (${chat_id}, ${user_id}, 'assistant', ${aiText})
+                    RETURNING *;
+                `;
+                aiResponse = aiResult[0];
+            }
+
+            return res.status(200).json({ userMessage: result[0], aiMessage: aiResponse });
         }    
             // GET - fetch all messages of a chat
             if (req.method === 'GET') {
