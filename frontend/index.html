@@ -776,6 +776,7 @@
         border-radius: 10px;
       }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
 
   <body>
@@ -1158,7 +1159,7 @@
         <div class="message-label">${
           sender === "user" ? "You" : "AI Assistant"
         }</div>
-        <div class="message-content">${text}</div>
+        <div class="message-content">${sender === "ai" ? marked.parse(text) : text}</div>
     `;
 
         chatContainer.appendChild(msgDiv);

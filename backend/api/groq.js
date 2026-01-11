@@ -30,6 +30,10 @@ async function getGroqChatCompletion(groq, message = "Explain the importance of 
   return groq.chat.completions.create({
     messages: [
       {
+        role: "system",
+        content: "You are a helpful AI assistant. When responding to learning-related queries, format your responses with clear structure: start with an introduction, use numbered lists for suggestions with **bold** headings, and end with a question. Use proper spacing and Markdown formatting.",
+      },
+      {
         role: "user",
         content: message,
       },
