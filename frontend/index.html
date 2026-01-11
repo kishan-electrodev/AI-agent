@@ -947,10 +947,14 @@
     <script>
       // --- API CONFIGURATION ---
 
-      async function fetchGroq() {
+      async function fetchGroq(message) {
         try {
           const res = await fetch("/api/groq", {
             method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message })
           });
 
           if (!res.ok) {
@@ -959,9 +963,10 @@
           }
 
           const data = await res.json();
-          console.log(data.reply);
+          return data.reply;
         } catch (err) {
           console.error("Groq API Error:", err.message);
+          throw err;
         }
       }
 
@@ -1165,25 +1170,17 @@
         });
       }
 
-      function handleSend() {
+      async function handleSend() {
         const text = userInput.value.trim();
         if (text) {
           addMessage(text, "user");
           userInput.value = "";
-          console.log(fetchGroq(text));
-
-          // Simulate AI Response delay
-          setTimeout(() => {
-            const aiResponses = [
-              "That's an interesting question. Let me look into that for you.",
-              "I've updated my internal logs with that information. What's next?",
-              "Got it. I'm ready to help you build or analyze that request.",
-              "I'm here to assist. Would you like more details on that topic?",
-            ];
-            const randomResponse =
-              aiResponses[Math.floor(Math.random() * aiResponses.length)];
-            addMessage(randomResponse, "ai");
-          }, 1000);
+          try {
+            const reply = await fetchGroq(text);
+            addMessage(reply, "ai");
+          } catch (err) {
+            addMessage("Error: " + err.message, "ai");
+          }
         }
       }
 

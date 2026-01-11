@@ -13,36 +13,36 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-import Groq from "groq-sdk";
-import { groq } from '@ai-sdk/groq';
-import { generateText } from 'ai';
+// import Groq from "groq-sdk";
+// import { groq } from '@ai-sdk/groq';
+// import { generateText } from 'ai';
 
-const groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// const groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-export async function main() {
-    const chatCompletion = await getGroqChatCompletion();
-    // Print the completion returned by the LLM.
-    console.log(chatCompletion.choices[0]?.message?.content || "");
-}
+// export async function main() {
+//     const chatCompletion = await getGroqChatCompletion();
+//     // Print the completion returned by the LLM.
+//     console.log(chatCompletion.choices[0]?.message?.content || "");
+// }
 
-export async function getGroqChatCompletion() {
-    return groqClient.chat.completions.create({
-        messages: [
-            {
-                role: "user",
-                content: "Explain the importance of fast language models",
-            },
-        ],
-        model: "openai/gpt-oss-20b",
-    });
-}
+// export async function getGroqChatCompletion() {
+//     return groqClient.chat.completions.create({
+//         messages: [
+//             {
+//                 role: "user",
+//                 content: "hi, tell me a joke about computers",
+//             },
+//         ],
+//         model: "openai/gpt-oss-20b",
+//     });
+// }
 
-const { text } = await generateText({
-  model: groq('llama-3.3-70b-versatile'),
-  prompt: 'Write a vegetarian lasagna recipe for 4 people.',
-});
+// const { text } = await generateText({
+//   model: groq('llama-3.3-70b-versatile'),
+//   prompt: 'hi, tell me a joke about computers',
+// });
 
-console.log(text);
+// console.log(text);
 const sql = neon(process.env.DATABASE_URL);
 
 // Create table if not exists
