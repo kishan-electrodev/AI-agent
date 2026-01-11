@@ -34,6 +34,6 @@ async function getGroqChatCompletion(groq, message = "Explain the importance of 
         content: message,
       },
     ],
-    model: "llama3-70b-8192",
+    model: "llama-3.1-8b-instant",
   });
 }
