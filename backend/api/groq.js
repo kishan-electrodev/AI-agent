@@ -1,7 +1,11 @@
 import Groq from "groq-sdk";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 const groqClient = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY
 });
 
 export default async function fetchGroq(req, res) {
@@ -10,7 +14,8 @@ export default async function fetchGroq(req, res) {
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const { message } = req.body;
+    // const { message } = req.body;
+    message = "Hello, Groq!";
 
     if (!message || typeof message !== "string") {
       return res.status(400).json({ error: "Message must be a string" });
@@ -39,3 +44,5 @@ async function getGroqChatCompletion(message) {
     ],
   });
 }
+
+
