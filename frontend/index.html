@@ -950,7 +950,7 @@
 
       async function fetchGroq(message) {
         try {
-          const res = await fetch("/api/groq", {
+          const res = await fetch("https://ai-agent-backend-three.vercel.app/api/groq", {
             method: "POST",
             headers: {
               'Content-Type': 'application/json'
