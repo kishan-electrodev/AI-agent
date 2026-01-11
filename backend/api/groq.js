@@ -2,7 +2,7 @@ import Groq from "groq-sdk";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-export async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method === 'GET') {
     return res.json({ message: "it is okay and work" });
   } else if (req.method === 'POST') {
@@ -22,7 +22,7 @@ export async function handler(req, res) {
   }
 }
 
-export async function getGroqChatCompletion(message = "Explain the importance of fast language models") {
+async function getGroqChatCompletion(message = "Explain the importance of fast language models") {
   return groq.chat.completions.create({
     messages: [
       {
