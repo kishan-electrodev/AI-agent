@@ -12,7 +12,11 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^3.0.4",
     "@clerk/clerk-js": "^5.117.0",
+    "@neondatabase/serverless": "^1.0.2",
+    "ai": "^6.0.27",
+    "dotenv": "^17.2.3",
     "groq-sdk": "^0.37.0"
   }
 }

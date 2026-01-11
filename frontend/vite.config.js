@@ -9,5 +9,14 @@ export default defineConfig({
             feedback: "src/feedback.html"
         }
     }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://ubiquitous-palm-tree-44vv7g6prq7f5jqg-3000.app.github.dev',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   }
 });
