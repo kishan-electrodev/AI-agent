@@ -949,21 +949,21 @@
 
       async function fetchGroq() {
         try {
-          const res = await fetch("/api/groq", {
+          const res = await fetch("/api/grok", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ message: "Hello Groq" }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "Hello" }),
           });
+
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text);
+          }
 
           const data = await res.json();
           console.log(data.reply);
-
-          return data;
-        } catch (error) {
-          console.error("Groq API Error:", error);
-          return "❌ API error";
+        } catch (err) {
+          console.error("Groq API Error:", err.message);
         }
       }
 
